@@ -55,9 +55,21 @@ const resetPassword = async (req, resp, next) => {
   }
 };
 
+const validateToken = async(req, resp, next) => {
+  try {
+    const result = await authService.validateToken(req.body);
+
+    return resp.status(result.status).json({ message: result.message });
+  
+  } catch (error) {
+    next(error);
+  }
+} 
+
 module.exports = {
   register,
   login,
   forgotPassword,
   resetPassword,
+  validateToken
 };

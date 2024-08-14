@@ -174,9 +174,27 @@ const resetPassword = async (body) => {
   return passwordUpdated;
 };
 
+const validateToken = async (body) => {
+
+  const { token } = body;
+
+  if (!token) {
+    return { status: 400, message: 'Token is required' };
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRETKEY);
+    // Optionally, check if the user still exists in your database
+    return { status: 200, message: 'Token is valid' };
+  } catch (error) {
+    return { status: 401, message: 'Invalid or expired token' };
+  } 
+};
+
 module.exports = {
   register,
   login,
   forgotPassword,
   resetPassword,
+  validateToken
 };
