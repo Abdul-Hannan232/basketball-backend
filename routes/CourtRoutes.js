@@ -11,4 +11,4 @@ router.put('/update', authenticateToken,CourtController.updateCourt)
 router.delete('/:id', authenticateToken,CourtController.deleteCourt)
 router.post('/search',authenticateToken, CourtController.searchCourt);
 
-module.exports=router
+module.exports=router 

@@ -11,7 +11,12 @@ const addCourt = async (courtData) => {
 };
 
 const allCourt = async () => {
-  return await Court.findAll();
+  return await Court.findAll({
+    include: [{
+        model: Rating,
+        as: 'rating',
+    }]
+});
 };
 
 const updateCourt = async (courtData) => {
