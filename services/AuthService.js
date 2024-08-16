@@ -114,7 +114,7 @@ const forgotPassword = async (req) => {
     resetTokenRecord.expiresAt = tokenExpiry;
   }
 
-  let resetUrl = `${process.env.WEBSITE_URL}/reset-password?user_id=${user.id}&token=${resetToken}`;
+  let resetUrl = `${process.env.WEBSITE_URL}/resetPassword?user_id=${user.id}&token=${resetToken}`;
   const mailOptions = {
     from: process.env.TRANSPORTER_USER,
     to: user.email,
