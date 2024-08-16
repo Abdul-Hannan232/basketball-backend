@@ -8,6 +8,7 @@ const AuthRoutes = require('./routes/AuthRoutes')
 const CourtRoutes = require('./routes/CourtRoutes')
 const RatingRoutes = require('./routes/RatingRoutes')
 const setupDatabaseRelations=require('./models/Relations')
+const path = require('path');
 const cors = require('cors')
 app.use(cors())
 // Test the MySQL connection
@@ -29,7 +30,7 @@ app.use('/api/auth', AuthRoutes)
 app.use('/api/user', UserRoutes)
 app.use('/api/court',CourtRoutes) 
 app.use('/api/rating',RatingRoutes)
-
+app.use('/upload', express.static(path.join(__dirname, 'upload')));
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
