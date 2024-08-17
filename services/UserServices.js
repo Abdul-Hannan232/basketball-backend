@@ -2,13 +2,7 @@ const { response } = require("express");
 const User = require("../models/User");
 const { Sequelize }= require('sequelize')
 const getAllUsers = async () => {
-    return await User.findAll({
-        where: {
-            role: {
-                [Sequelize.Op.notIn]: ['admin']
-            }
-        }
-    });
+    return await User.findAll();
  };
 const getUserById = async (id) => {
     return await User.findByPk(id);

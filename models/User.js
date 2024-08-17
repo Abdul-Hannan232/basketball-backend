@@ -46,6 +46,14 @@ const User = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    phone_number: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    remarks: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     role: {
       type: DataTypes.ENUM,
       defaultValue: 'user',
