@@ -88,6 +88,11 @@ const checkUserRedirection = async (req) => {
     }
   }
 
+  if (!user.isactive) {
+    return { status: HttpStatus.FORBIDDEN, message: `${user.name}, your account is blocked.`
+  };
+  }
+
   return user;
 };
 
@@ -188,7 +193,7 @@ const validateToken = async (body) => {
     return { status: 200, message: 'Token is valid' };
   } catch (error) {
     return { status: 401, message: 'Invalid or expired token' };
-  } 
+  }
 };
 
 module.exports = {
