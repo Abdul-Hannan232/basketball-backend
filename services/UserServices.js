@@ -1,9 +1,51 @@
 const { response } = require("express");
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 const { Sequelize }= require('sequelize')
+const HttpStatus = require("../utils/ResponseStatus");
 const getAllUsers = async () => {
     return await User.findAll();
  };
+
+ const addUser = async (userData) => {
+    try {
+        // Validate email format
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        if (!emailRegex.test(userData.email)) {
+            return { status: HttpStatus.BAD_REQUEST, message: "Invalid email format" };
+        }
+
+        // Check if the email already exists
+        const existingUser = await User.findOne({ where: { email: userData.email } });
+        if (existingUser) {
+            return { status: HttpStatus.CONFLICT, message: "Email already exists" };
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+        // Create the new user
+        const newUser = await User.create({
+            ...userData,
+            password: hashedPassword,
+        });
+
+        return {
+            status: HttpStatus.CREATED,
+            message: "User created successfully",
+            user: newUser,
+        };
+    } catch (error) {
+        console.error("Error in addUser:", error.message);
+        return {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: "An error occurred while creating the user",
+            error: error.message,
+        };
+    }
+};
+
+ 
 const getUserById = async (id) => {
     return await User.findByPk(id);
 };
@@ -57,5 +99,6 @@ module.exports = {
     getUserById,
     searchUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    addUser
 };
