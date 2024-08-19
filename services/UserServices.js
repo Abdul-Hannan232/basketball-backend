@@ -72,7 +72,7 @@ const searchUser = async (req) => {
     });
  
     return users;
-};
+}; 
 
 const updateUser = async (userData) => {
      const { name,position,team,weight,height,country,isactive,jersey_number,phone_number,remarks,id } = userData
