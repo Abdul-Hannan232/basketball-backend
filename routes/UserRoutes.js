@@ -9,8 +9,8 @@ router.post('/add',AuthAndCheckRole(['admin']), UserController.addUser)
 router.get('/:id',authenticateToken, UserController.getUser);
 router.post('/search',authenticateToken, UserController.searchUser);
 router.put('/update',authenticateToken, UserController.updateUser);
-router.delete('/:id',authenticateToken, UserController.deleteUser);
+router.delete('/:id',AuthAndCheckRole(['admin']), UserController.deleteUser);
 
 
 
-module.exports=router
+module.exports=router 

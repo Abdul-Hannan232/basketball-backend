@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const HttpStatus = require('../utils/ResponseStatus')
 /**
  * Middleware to authenticate the token and check if the user has one of the required roles.
  * 
@@ -11,22 +11,28 @@ const AuthAndCheckRole = (roles) => {
         try {
             const authHeader = req.headers.authorization;
             if (!authHeader) {
-                // If the Authorization header is missing
-                throw new Error('Authorization header is missing');
+                res.status(HttpStatus.UNAUTHORIZED).json({
+                    success: false,
+                    message: "Session expired. Please log in."
+                });
             }
 
             const parts = authHeader.split(' ');
             if (parts.length !== 2 || parts[0] !== 'Bearer') {
-                // If the Authorization header is not in the correct format
-                throw new Error('Authorization header is not in Bearer token format');
+                res.status(HttpStatus.UNAUTHORIZED).json({
+                    success: false,
+                    message: "Session expired. Please log in."
+                });
             }
 
             const token = parts[1];
 
             jwt.verify(token, process.env.SECRETKEY, (err, user) => {
                 if (err) {
-                    // If token verification fails
-                    throw new Error('Invalid or expired token');
+                    res.status(HttpStatus.UNAUTHORIZED).json({
+                        success: false,
+                        message: "Session expired. Please log in."
+                    });
                 }
 
                 req.user = user;
@@ -35,11 +41,15 @@ const AuthAndCheckRole = (roles) => {
                 if (req.user && roles.includes(req.user.role)) {
                     next(); // User is authenticated and has the required role
                 } else {
-                    res.status(403).json({ message: 'Access Denied: You do not have the correct role' });
+                    res.status(HttpStatus.UNAUTHORIZED).json({
+                        success: false,
+                        message: "Access Denied: You do not have the correct role"
+                    });
                 }
             });
         } catch (error) {
-            res.status(401).json({ message: error.message }); // Handle errors
+             // Handle any other errors
+        next(error);
         }
     };
 };
