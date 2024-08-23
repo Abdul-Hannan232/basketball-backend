@@ -6,5 +6,6 @@ router.post('/login', authController.login)
 router.post('/forgot-password', authController.forgotPassword)
 router.post('/reset-password', authController.resetPassword)
 router.post('/validate-token', authController.validateToken)
+router.post('/social-media-login', authController.socialMediaLogin)
 
 module.exports = router; 

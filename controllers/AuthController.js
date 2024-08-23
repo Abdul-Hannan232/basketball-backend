@@ -25,7 +25,7 @@ const login = async (req, resp, next) => {
       .status(HttpStatus.OK)
       .json({ message: "User Logged In Successfully", data: user });
   } catch (error) {
-    next(error);
+    next(error)
   }
 };
 
@@ -55,21 +55,38 @@ const resetPassword = async (req, resp, next) => {
   }
 };
 
-const validateToken = async(req, resp, next) => {
+const validateToken = async (req, resp, next) => {
   try {
     const result = await authService.validateToken(req.body);
 
     return resp.status(result.status).json({ message: result.message });
-  
+
   } catch (error) {
-    next(error);
+    return error
   }
-} 
+}
+
+const socialMediaLogin = async (req, resp, next) => {
+  try {
+    const user = await authService.socialMediaLogin(req.body)
+
+    if (user.status) {
+      resp.status(user.status).json({ message: user.message });
+    }
+    resp
+      .status(HttpStatus.OK)
+      .json({ message: "User Logged In Successfully", data: user });
+  } catch (error) {
+    next(error)
+  }
+
+};
 
 module.exports = {
   register,
   login,
   forgotPassword,
   resetPassword,
-  validateToken
+  validateToken,
+  socialMediaLogin
 };

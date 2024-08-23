@@ -89,8 +89,9 @@ const checkUserRedirection = async (req) => {
   }
 
   if (!user.isactive) {
-    return { status: HttpStatus.FORBIDDEN, message: `${user.name}, your account is blocked.`
-  };
+    return {
+      status: HttpStatus.FORBIDDEN, message: `${user.name}, your account is blocked.`
+    };
   }
 
   return user;
@@ -196,10 +197,21 @@ const validateToken = async (body) => {
   }
 };
 
+const socialMediaLogin = async (body) => {
+
+  const response = await register(body)
+  const req = { body }
+  if (response) {
+    const response = await login(req)
+    return response
+  }
+}
+
 module.exports = {
   register,
   login,
   forgotPassword,
   resetPassword,
-  validateToken
+  validateToken,
+  socialMediaLogin
 };
