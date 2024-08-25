@@ -12,7 +12,7 @@ const path = require('path');
 const cors = require('cors')
 app.use(cors())
 // Test the MySQL connection
-dbConnection.sync({ alter: true }) 
+dbConnection.sync({ alter: false }) 
   .then(() => {
     console.log('Connected to the MySQL database and synchronized models.');
   })
@@ -31,6 +31,7 @@ app.use('/api/user', UserRoutes)
 app.use('/api/court',CourtRoutes) 
 app.use('/api/rating',RatingRoutes)
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

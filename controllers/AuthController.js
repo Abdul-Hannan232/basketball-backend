@@ -70,6 +70,7 @@ const socialMediaLogin = async (req, resp, next) => {
   try {
     const user = await authService.socialMediaLogin(req.body)
 
+    console.log("user.",user)
     if (user.status) {
       resp.status(user.status).json({ message: user.message });
     }
@@ -81,7 +82,6 @@ const socialMediaLogin = async (req, resp, next) => {
   }
 
 };
-
 module.exports = {
   register,
   login,
