@@ -120,14 +120,85 @@ const forgotPassword = async (req) => {
     resetTokenRecord.expiresAt = tokenExpiry;
   }
 
-  let resetUrl = `${process.env.WEBSITE_URL}/resetPassword?user_id=${user.id}&token=${resetToken}`;
+  let resetUrl = `${process.env.WEBSITE_URL}/reset-password?user_id=${user.id}&token=${resetToken}`;
   const mailOptions = {
     from: process.env.TRANSPORTER_USER,
     to: user.email,
-    subject: "Password Reset",
-    html: `<p>To reset your password, please click the button below:</p>
-            <a href="${resetUrl}" style="background-color: #4CAF50; color: white; padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">Reset Password</a><p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
-          `,
+    subject: "HoopSquad - Password Reset",
+    html: ` <body
+    style="
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    "
+  >
+    <div
+      style="
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      "
+    >
+      <div style="text-align: center; padding: 10px 0">
+        <h1 style="color: #ffa500; font-size: 28px; margin: 0">HoopSquad</h1>
+        <img
+          src="https://basket-ball-website-cqw3.vercel.app/_next/image?url=%2FLOGO.png&w=128&q=75"
+          alt="HoopSquad Logo"
+          style="max-width: 150px; margin: 20px 0"
+        />
+      </div>
+
+      <div style="text-align: center; padding: 10px 0">
+        <h2 style="color: #333333; font-size: 24px; margin: 0">
+          Reset Your Password
+        </h2>
+        <p
+          style="
+            font-size: 16px;
+            color: #666666;
+            line-height: 1.5;
+            margin: 20px 0;
+          "
+        >
+          Hello, it looks like you requested a password reset. No worries, we've
+          got you covered!
+        </p>
+        <a
+          href="${resetUrl}"
+          style="
+            display: inline-block;
+            background-color: #ffa500;
+            color: white;
+            padding: 15px 25px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 20px 0;
+          "
+          >Reset Password</a
+        >
+        <p
+          style="
+            font-size: 16px;
+            color: #666666;
+            line-height: 1.5;
+            margin: 20px 0;
+          "
+        >
+          If you did not request a password reset, please ignore this email or
+          contact our support team at HoopSquad for assistance.
+        </p>
+        <p style="font-size: 14px; color: #999999; margin: 20px 0">
+          Thanks for being a part of the HoopSquad community!
+        </p>
+      </div>
+    </div>
+  </body>`,
   };
 
   const emailSent = await forgotPasswordMail(mailOptions);
@@ -198,7 +269,6 @@ const validateToken = async (body) => {
 };
 
 const socialMediaLogin = async (body) => {
-
   const response = await register(body)
   const req = { body }
   if (response) {
