@@ -12,7 +12,7 @@ const path = require('path');
 const cors = require('cors')
 app.use(cors())
 // Test the MySQL connection
-dbConnection.sync({ alter: true }) 
+dbConnection.sync({ alter: false }) 
   .then(() => {
     console.log('Connected to the MySQL database and synchronized models.');
   })
