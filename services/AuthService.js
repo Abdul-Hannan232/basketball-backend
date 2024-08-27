@@ -40,8 +40,13 @@ const register = async (userData) => {
     ...userData,
     password: hashedPassword,
   });
+  if(userData.login_type==="social")
+  {
+    
+    return { message: "Account Created Successfully ", status:201,data: newUser };
+  }
 
-  return newUser;
+   return newUser;
 };
 
 const login = async (req) => {
@@ -271,10 +276,24 @@ const validateToken = async (body) => {
 const socialMediaLogin = async (body) => {
   const response = await register(body)
   const req = { body }
-  if (response) {
-    const response = await login(req)
-    return response
+  if (response.status===409 || response?.status===201) {
+    const user = await User.findOne({ where: { email: req.body.email } });
+
+    let userForToken = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
+    const token = jwt.sign(userForToken, process.env.SECRETKEY, {
+      expiresIn: process.env.EXPIRETIME,
+    });
+    userForToken.token = token;
+    return userForToken
   }
+
+
 }
 
 module.exports = {
