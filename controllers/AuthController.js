@@ -69,13 +69,12 @@ const validateToken = async (req, resp, next) => {
 const socialMediaLogin = async (req, resp, next) => {
   try {
     const user = await authService.socialMediaLogin(req.body)
-    if (user.status) {
-      resp.status(user.status).json({ message: user.message });
-    }else{
+    // console.log("controller",user)
+    if (user) {
       resp
       .status(HttpStatus.OK)
       .json({ message: "User Logged In Successfully", data: user });
-    }
+    } 
    
   } catch (error) {
     next(error)
