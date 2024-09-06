@@ -4,7 +4,7 @@ const UserController = require('../controllers/UserController');
 const authenticateToken = require('../middlewares/AuthMiddleware')
 const AuthAndCheckRole = require('../middlewares/AuthAndCheckRole')
 const { upload } = require('../middlewares/multerConfig');
-const {RouteHandler} = require('../utils/RouteHandler')
+// const {RouteHandler} = require('../utils/RouteHandler')
 
 router.get('/all', authenticateToken, UserController.getUsers)
 router.post('/add', AuthAndCheckRole(['admin']), upload.single('image'), UserController.addUser, (err, req, res, next) => {

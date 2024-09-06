@@ -10,7 +10,17 @@ const RatingRoutes = require('./routes/RatingRoutes')
 const setupDatabaseRelations=require('./models/Relations')
 const path = require('path');
 const cors = require('cors')
-app.use(cors())
+const allowedOrigins = ['http://localhost:3000', 'https://basket-ball-website.vercel.app','https://basketball-manaheeljamils-projects.vercel.app'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 // Test the MySQL connection
 dbConnection.sync({ alter: false }) 
   .then(() => {
