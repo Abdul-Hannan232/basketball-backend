@@ -1,7 +1,7 @@
 // controllers/UserController.js
 const userService = require('../services/UserServices');
 const HttpStatus = require('../utils/ResponseStatus')
-
+const { assignUniqueName, uploadImage } = require('../middlewares/multerConfig')
 
 const getUsers = async (req, res, next) => {
     try {
@@ -13,10 +13,16 @@ const getUsers = async (req, res, next) => {
 };
 
 const addUser = async (req, resp, next) => {
+    const imageFile = req.file;
     try {
+        if (imageFile) {
+            req.body.image = assignUniqueName(imageFile)
+        }
         const user = await userService.addUser(req.body);
+        if (user.status === 201 && imageFile) {
+            uploadImage(req.body.image)
+        }
 
-        // Send the response and return immediately to prevent further execution
         return resp.status(user.status).json({ message: user.message, data: user.user });
     } catch (error) {
         next(error); // Pass any errors to the error-handling middleware
@@ -71,5 +77,4 @@ module.exports = {
     updateUser,
     deleteUser,
     addUser
-    
 };

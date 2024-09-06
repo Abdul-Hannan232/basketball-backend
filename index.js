@@ -32,6 +32,12 @@ app.use('/api/court',CourtRoutes)
 app.use('/api/rating',RatingRoutes)
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
+
+// Global error-handling middleware
+app.use((err, req, res, next) => {
+  return res.status(err.status).json({ message: err.message });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
