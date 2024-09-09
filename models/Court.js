@@ -15,25 +15,32 @@ const Court = sequelize.define(
     },
     location: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: false,
+      allowNull: true,
+    },
+    size: {
+      type: DataTypes.ENUM('Half Court', 'Full Court',), // Replace with your actual size options
+      allowNull: true,
+    },
+    availability: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     operating_hours: {
       type: DataTypes.TIME,
-      allowNull: false,
+      allowNull: true,
     },
     cost: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
+      allowNull: true,
     },
     ratings: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
+      allowNull: true,
     },
     type: {
       type: DataTypes.ENUM,
       defaultValue: "indoor",
-      values: ["indoor", "outdoor"],
+      values: ["indoor", "outdoor", "sheltered"],
     },
     isactive: {
       type: DataTypes.BOOLEAN,
@@ -41,17 +48,17 @@ const Court = sequelize.define(
     },
     condition: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: false,
     },
     accessibility: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: false,
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: false,
     },
     images: {

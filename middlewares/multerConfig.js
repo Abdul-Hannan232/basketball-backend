@@ -1,5 +1,6 @@
 const multer = require('multer');
 const path = require('path');
+const {RandomString } =require('../utils/RandomString')
 const fs = require('fs');
 
 // Multer configuration
@@ -13,7 +14,7 @@ const storage = multer.diskStorage({
     const now = new Date();
     const formattedDate = now.toISOString().replace(/[:.-]/g, '').slice(0, 14);    // Format the date and time to YYYYMMDD-HHMMSS
     const ext = path.extname(file.originalname);
-    const uniqueName = `/${formattedDate}${ext}`;
+    const uniqueName = `/${formattedDate+RandomString(30)}${ext}`;
     cb(null, uniqueName);
     },
 });
@@ -27,7 +28,8 @@ const fileFilter = (req, file, cb) => {
     if (extname && mimetype) {
         return cb(null, true);
     } else {
-        const err = new Error("Only png or jpg, max size 2mb allowed");
+        console.log("errrrrr---------")
+        const err = new Error("Only PNG or JPG images, maximum size 2MB, are allowed.");
         err.status = 400; // Custom status code
         return cb(err);
      }
@@ -40,18 +42,6 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
 });
 
-const assignUniqueName=(imageFile)=>{
-
-     try{
-        const now = new Date();
-        const formattedDate = now.toISOString().replace(/[:.-]/g, '').slice(0, 14); // Format the date
-        const ext = path.extname(imageFile.originalname); // Get the extension of the file
-        const uniqueName = `/${formattedDate}${ext}`; // Combine to create unique name
-        
-        // Set image file name in the request body before saving the user
-        return uniqueName;
-     }catch(err){ throw new Error(err.message)}
-}
 
 const uploadImage =async (uniqueName)=>{
     try{
@@ -60,6 +50,5 @@ const uploadImage =async (uniqueName)=>{
 }
 module.exports = {
     upload,
-    assignUniqueName,
     uploadImage
 }

@@ -1,7 +1,7 @@
 // controllers/UserController.js
 const userService = require('../services/UserServices');
 const HttpStatus = require('../utils/ResponseStatus')
-const { assignUniqueName, uploadImage } = require('../middlewares/multerConfig')
+const { uploadImage } = require('../middlewares/multerConfig')
 
 const getUsers = async (req, res, next) => {
     try {
@@ -16,7 +16,7 @@ const addUser = async (req, resp, next) => {
     const imageFile = req.file;
     try {
         if (imageFile) {
-            req.body.image = assignUniqueName(imageFile)
+            req.body.image = imageFile.filename
         }
         const user = await userService.addUser(req.body);
         if (user.status === 201 && imageFile) {
