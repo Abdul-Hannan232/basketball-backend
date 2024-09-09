@@ -4,7 +4,6 @@ const { assignUniqueName, uploadImage } = require('../middlewares/multerConfig')
 
 const addCourt = async (req, res, next) => {
     const imageFile = req.files;
-    console.log("imageFiles",imageFile)
     try {
         if (imageFile.length > 0) {
             // Extract filenames from imageFile array
