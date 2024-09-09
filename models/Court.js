@@ -6,7 +6,7 @@ const Court = sequelize.define(
   {
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: false,
     },
     user_id: {
