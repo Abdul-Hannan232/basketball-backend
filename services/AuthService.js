@@ -151,7 +151,7 @@ const forgotPassword = async (req) => {
       <div style="text-align: center; padding: 10px 0">
         <h1 style="color: #ffa500; font-size: 28px; margin: 0">HoopSquad</h1>
         <img
-          src="https://basket-ball-website-cqw3.vercel.app/_next/image?url=%2FLOGO.png&w=128&q=75"
+          src="https://backend.basketball.mayonity.com/upload/LOGO.png"
           alt="HoopSquad Logo"
           style="max-width: 150px; margin: 20px 0"
         />
