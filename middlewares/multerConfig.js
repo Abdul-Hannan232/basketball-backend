@@ -45,10 +45,35 @@ const upload = multer({
 
 const uploadImage =async (uniqueName)=>{
     try{
-    const filePath = path.join(__dirname, './uploads', uniqueName);       
+    const filePath = path.join(__dirname, './upload', uniqueName);       
      }catch(err){ throw new Error(err.message)}
 }
+
+
+const deleteFile = (fileName) => {
+    const directoryPath = path.join(__dirname, '../upload'); // Path to your folder
+    const filePath = path.join(directoryPath, fileName);
+  
+    // Check if the file exists first
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        console.error('File does not exist:', filePath);
+        return;
+      }
+      // If the file exists, proceed to delete it
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error('Error deleting the file:', err);
+          return;
+        }
+        console.log('File deleted successfully:', filePath);
+      });
+    });
+  };
+
+
 module.exports = {
     upload,
-    uploadImage
+    uploadImage,
+    deleteFile
 }

@@ -3,6 +3,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { Sequelize }= require('sequelize')
 const HttpStatus = require("../utils/ResponseStatus");
+const { deleteFile } = require("../middlewares/multerConfig")
 const getAllUsers = async () => {
     return await User.findAll();
  };
@@ -90,9 +91,21 @@ const updateUser = async (userData) => {
 };
 
 const deleteUser = async (id) => {
-    return await User.destroy({
-        where: { id: id }
+  // Check if the user exists before attempting to delete
+  const userExists = await User.findOne({
+    where: { id: id },
+  });
+
+  // If user exists, proceed to delete
+  if (userExists) {
+     await User.destroy({
+      where: { id: id },
     });
+    const resp=deleteFile(userExists.dataValues.image)
+     return true; // Indicate successful deletion
+  }
+
+  return false; 
 };
 module.exports = {
     getAllUsers,
