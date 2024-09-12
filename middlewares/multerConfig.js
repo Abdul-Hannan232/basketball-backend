@@ -28,7 +28,7 @@ const fileFilter = (req, file, cb) => {
     if (extname && mimetype) {
         return cb(null, true);
     } else {
-        console.log("errrrrr---------")
+     
         const err = new Error("Only PNG or JPG images, maximum size 2MB, are allowed.");
         err.status = 400; // Custom status code
         return cb(err);
@@ -51,7 +51,8 @@ const uploadImage =async (uniqueName)=>{
 
 
 const deleteFile = (fileName) => {
-    const directoryPath = path.join(__dirname, '../upload'); // Path to your folder
+    console.log("name in deleteFile",fileName)
+     const directoryPath = path.join(__dirname, '../upload'); // Path to your folder
     const filePath = path.join(directoryPath, fileName);
   
     // Check if the file exists first

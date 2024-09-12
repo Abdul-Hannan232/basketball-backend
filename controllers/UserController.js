@@ -1,7 +1,7 @@
 // controllers/UserController.js
 const userService = require('../services/UserServices');
 const HttpStatus = require('../utils/ResponseStatus')
-const { uploadImage } = require('../middlewares/multerConfig')
+const { uploadImage, deleteFile } = require('../middlewares/multerConfig')
 
 const getUsers = async (req, res, next) => {
     try {
@@ -22,7 +22,6 @@ const addUser = async (req, resp, next) => {
         if (user.status === 201 && imageFile) {
             uploadImage(req.body.image)
         }
-
         return resp.status(user.status).json({ message: user.message, data: user.user });
     } catch (error) {
         next(error); // Pass any errors to the error-handling middleware
@@ -51,12 +50,34 @@ const searchUser = async (req, res, next) => {
         next(error)
     }
 }
+
 const updateUser = async (req, res, next) => {
+    const { file: imageFile, body } = req;
+    const { oldImage } = body;
+
     try {
-        const updatedUser = await userService.updateUser(req.body);
-        res.json({ message: "User updated successfully", updatedUser });
+
+        if (imageFile) {
+            body.image = imageFile.filename;
+            if (oldImage) {
+                delete body.oldImage;
+            }
+        }
+
+        const user = await userService.updateUser(body);
+
+        // If the update is successful and a new image was uploaded, handle the file operations
+        if (user.status === 200 && imageFile) {
+            await uploadImage(body.image);
+
+            if (oldImage) {
+                deleteFile(oldImage);
+            }
+        }
+        res.json({ message: "User updated successfully", user });
     } catch (err) {
-        next(err)
+        console.error("Error updating user:", err.message);
+        next(err);
     }
 };
 

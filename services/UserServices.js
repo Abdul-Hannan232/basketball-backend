@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const { Sequelize }= require('sequelize')
 const HttpStatus = require("../utils/ResponseStatus");
 const { deleteFile } = require("../middlewares/multerConfig")
+const BASE_URL = process.env.BASE_URL;
+
 const getAllUsers = async () => {
     return await User.findAll();
  };
@@ -37,8 +39,7 @@ const getAllUsers = async () => {
             user: newUser,
         };
     } catch (error) {
-        console.error("Error in addUser:", error.message);
-        return {
+         return {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
             message: "An error occurred while creating the user",
             error: error.message,
@@ -48,7 +49,14 @@ const getAllUsers = async () => {
 
  
 const getUserById = async (id) => {
-    return await User.findByPk(id);
+    // Fetch the user by ID
+    const user = await User.findByPk(id);
+  // Check if the user exists and has an image property
+  if (user && user.image) {
+    // Prepend the BASEURL to the user's image
+    user.image = `${BASE_URL}upload${user.image}`;
+}
+    return user;
 };
 
 const searchUser = async (req) => {
@@ -76,8 +84,8 @@ const searchUser = async (req) => {
 }; 
 
 const updateUser = async (userData) => {
-     const { name,position,team,weight,height,country,isactive,jersey_number,phone_number,remarks,id } = userData
-    const [affectedRows] = await User.update({ name,position,team,weight,height,country,isactive,phone_number,jersey_number,remarks }, {
+      const { name,position,team,weight,height,country,isactive,image,jersey_number,phone_number,remarks,id } = userData
+    const [affectedRows] = await User.update({ name,position,team,weight,height,country,isactive,image,phone_number,jersey_number,remarks }, {
         where: { id: id },
     });
 
@@ -86,8 +94,12 @@ const updateUser = async (userData) => {
             where: { id: id },
         });
 
-        return updatedUser;
-    }
+        return {
+            status: HttpStatus.OK,
+            message: "User updated successfully",
+            user: updatedUser,
+        };
+     }
 };
 
 const deleteUser = async (id) => {
