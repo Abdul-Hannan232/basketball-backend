@@ -22,6 +22,7 @@ const addUser = async (req, resp, next) => {
         if (user.status === 201 && imageFile) {
             uploadImage(req.body.image)
         }
+
         return resp.status(user.status).json({ message: user.message, data: user.user });
     } catch (error) {
         next(error); // Pass any errors to the error-handling middleware
@@ -62,6 +63,7 @@ const updateUser = async (req, res, next) => {
             if (oldImage) {
                 delete body.oldImage;
             }
+            console.log("fgh",body.image)
         }
 
         const user = await userService.updateUser(body);
@@ -74,7 +76,7 @@ const updateUser = async (req, res, next) => {
                 deleteFile(oldImage);
             }
         }
-        res.json({ message: "User updated successfully", user });
+        res.json(user);
     } catch (err) {
         console.error("Error updating user:", err.message);
         next(err);

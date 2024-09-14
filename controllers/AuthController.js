@@ -66,6 +66,22 @@ const validateToken = async (req, resp, next) => {
   }
 }
 
+const chanagePassword = async (req, resp, next) => {
+   try {
+    const passwordUpdated = await authService.changePassword(req.body);
+
+     if (passwordUpdated.status !== HttpStatus.OK) {
+      return resp.status(passwordUpdated.status).json({ message: passwordUpdated.message });
+    }
+
+     return resp.status(HttpStatus.OK).json({ message: passwordUpdated.message, user: passwordUpdated.user });
+  } catch (error) {
+    console.error("Error in chanagePassword:", error.message);
+    next(error);  
+  }
+};
+
+
 const socialMediaLogin = async (req, resp, next) => {
   try {
     const user = await authService.socialMediaLogin(req.body)
@@ -87,5 +103,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   validateToken,
-  socialMediaLogin
+  socialMediaLogin,
+  chanagePassword
 };

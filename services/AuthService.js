@@ -6,7 +6,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const HttpStatus = require("../utils/ResponseStatus");
 const { forgotPasswordMail } = require("../utils/EmailService");
-
+const BASE_URL = process.env.BASE_URL;
 require("dotenv").config(); // Load environment variables from .env file
 
 const register = async (userData) => {
@@ -40,13 +40,12 @@ const register = async (userData) => {
     ...userData,
     password: hashedPassword,
   });
-  if(userData.login_type==="social")
-  {
-    
-    return { message: "Account Created Successfully ", status:201,data: newUser };
+  if (userData.login_type === "social") {
+
+    return { message: "Account Created Successfully ", status: 201, data: newUser };
   }
 
-   return newUser;
+  return newUser;
 };
 
 const login = async (req) => {
@@ -57,11 +56,14 @@ const login = async (req) => {
   }
   const passwordIsValid = await bcrypt.compare(password, user.password);
 
+
+
   let userForToken = {
     id: user.id,
     name: user.name,
     email: user.email,
     role: user.role,
+    image: user.image ? `${BASE_URL}upload${user.image}` : ""
   };
 
   const token = jwt.sign(userForToken, process.env.SECRETKEY, {
@@ -256,6 +258,37 @@ const resetPassword = async (body) => {
   return passwordUpdated;
 };
 
+const changePassword = async (body) => {
+  const { id, password, old_password, confirm_password } = body;
+
+   if (!password) {
+    return { status: HttpStatus.BAD_REQUEST, message: "Password is required" };
+  }
+
+   if (password !== confirm_password) {
+    return { status: HttpStatus.BAD_REQUEST, message: "Passwords do not match" };
+  }
+
+   const user = await User.findOne({ where: { id } });
+  if (!user) {
+    return { status: HttpStatus.NOT_FOUND, message: "User not found" };
+  }
+
+   const isMatch = await bcrypt.compare(old_password, user.password);
+  if (!isMatch) {
+    return { status: HttpStatus.BAD_REQUEST, message: "Old password is incorrect" };
+  }
+
+   const hashedPassword = await bcrypt.hash(password, 10);
+  user.password = hashedPassword;
+  
+  const passwordUpdated = await user.save();
+  const passwordUpdatedObject = passwordUpdated.get({ plain: true });
+  delete passwordUpdatedObject.password;
+
+   return { status: HttpStatus.OK, message: "Password updated successfully", user: passwordUpdatedObject };
+};
+
 const validateToken = async (body) => {
 
   const { token } = body;
@@ -276,7 +309,7 @@ const validateToken = async (body) => {
 const socialMediaLogin = async (body) => {
   const response = await register(body)
   const req = { body }
-  if (response.status===409 || response?.status===201) {
+  if (response.status === 409 || response?.status === 201) {
     const user = await User.findOne({ where: { email: req.body.email } });
 
     let userForToken = {
@@ -296,11 +329,13 @@ const socialMediaLogin = async (body) => {
 
 }
 
+
 module.exports = {
   register,
   login,
   forgotPassword,
   resetPassword,
   validateToken,
-  socialMediaLogin
+  socialMediaLogin,
+  changePassword
 };

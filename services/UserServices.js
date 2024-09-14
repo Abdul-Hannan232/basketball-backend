@@ -47,7 +47,6 @@ const getAllUsers = async () => {
     }
 };
 
- 
 const getUserById = async (id) => {
     // Fetch the user by ID
     const user = await User.findByPk(id);
@@ -84,20 +83,25 @@ const searchUser = async (req) => {
 }; 
 
 const updateUser = async (userData) => {
-      const { name,position,team,weight,height,country,isactive,image,jersey_number,phone_number,remarks,id } = userData
-    const [affectedRows] = await User.update({ name,position,team,weight,height,country,isactive,image,phone_number,jersey_number,remarks }, {
+      const { name,position,team,weight,height,country,isactive,image,jersey_number,phone_number,address,first_name,last_name,joined_since,remarks,id } = userData
+    const [affectedRows] = await User.update({ name,position,team,weight,height,country,isactive,image,phone_number,address,first_name,last_name,joined_since,jersey_number,remarks }, {
         where: { id: id },
     });
 
     if (affectedRows > 0) {
-        const updatedUser = await User.findOne({
+        const user = await User.findOne({
             where: { id: id },
         });
+
+        if(user && user.image)
+        {
+            user.image = `${BASE_URL}upload${user.image}`;
+        }
 
         return {
             status: HttpStatus.OK,
             message: "User updated successfully",
-            user: updatedUser,
+            user: user,
         };
      }
 };
@@ -119,6 +123,7 @@ const deleteUser = async (id) => {
 
   return false; 
 };
+
 module.exports = {
     getAllUsers,
     getUserById,
