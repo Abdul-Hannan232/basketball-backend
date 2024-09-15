@@ -6,8 +6,6 @@ const Court = sequelize.define(
   {
     name: {
       type: DataTypes.STRING,
-      allowNull: true,
-      unique: false,
     },
     user_id: {
       type: DataTypes.INTEGER,
@@ -15,32 +13,25 @@ const Court = sequelize.define(
     },
     location: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     size: {
-      type: DataTypes.ENUM('Half Court', 'Full Court',), // Replace with your actual size options
-      allowNull: true,
+      type: DataTypes.STRING,  // Changed ENUM to STRING
     },
     availability: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     operating_hours: {
-      type: DataTypes.TIME,
-      allowNull: true,
+      type: DataTypes.STRING,
     },
     cost: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: true,
+      type: DataTypes.STRING,
     },
     ratings: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: true,
     },
     type: {
-      type: DataTypes.ENUM,
+      type: DataTypes.STRING,
       defaultValue: "indoor",
-      values: ["indoor", "outdoor", "sheltered"],
     },
     isactive: {
       type: DataTypes.BOOLEAN,
@@ -48,18 +39,27 @@ const Court = sequelize.define(
     },
     condition: {
       type: DataTypes.STRING,
-      allowNull: true,
-      unique: false,
     },
     accessibility: {
       type: DataTypes.STRING,
-      allowNull: true,
-      unique: false,
     },
     description: {
       type: DataTypes.STRING,
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+    },
+    facilities: {
+      type: DataTypes.TEXT, // Store as JSON string
       allowNull: true,
-      unique: false,
+      defaultValue: null,
+      get() {
+        const rawValue = this.getDataValue("facilities");
+        return rawValue ? JSON.parse(rawValue) : [];
+      },
+      set(value) {
+        this.setDataValue("facilities", JSON.stringify(value));
+      },
     },
     images: {
       type: DataTypes.TEXT, // Store as JSON string

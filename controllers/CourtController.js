@@ -5,7 +5,7 @@ const { assignUniqueName, uploadImage } = require('../middlewares/multerConfig')
 const addCourt = async (req, res, next) => {
     const imageFile = req.files;
     try {
-        if (imageFile.length > 0) {
+        if (imageFile?.length > 0) {
             // Extract filenames from imageFile array
             const images = imageFile.map(file => file.filename);
             
@@ -28,6 +28,7 @@ const allCourt = async (req, res, next) => {
         const courts = await courtService.allCourt();
         res.status(HttpStatus.OK).json({ message: "Courts Fetched Successfully", courts });
     } catch (err) {
+        console.log("error",err.message)
         next(err)
     }
 };

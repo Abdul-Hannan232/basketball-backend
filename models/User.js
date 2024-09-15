@@ -7,22 +7,15 @@ const User = sequelize.define(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: false, 
-    },
+     },
     first_name: {
       type: DataTypes.STRING,
-      allowNull: true,
-      unique: false,
     }, 
     last_name: {
       type: DataTypes.STRING,
-      allowNull: true, 
-      unique: false,
     },
     joined_since: {
       type: DataTypes.DATE,
-      allowNull: true,
-      unique: false,
     },
     email: {
       type: DataTypes.STRING,
@@ -31,7 +24,6 @@ const User = sequelize.define(
     },
     image: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -39,23 +31,18 @@ const User = sequelize.define(
     },
     position: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     team: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     weight: {
       type: DataTypes.STRING, 
-      allowNull: true,
     },
     height: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     country: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     isactive: {
       type: DataTypes.BOOLEAN,
@@ -63,23 +50,18 @@ const User = sequelize.define(
     },
     jersey_number: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     phone_number: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     remarks: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     address: {
       type: DataTypes.STRING,
-      allowNull: true,
     },
     login_type: {
       type: DataTypes.STRING,
-      allowNull: true,
       defaultValue: 'simple'
     },
     role: {
