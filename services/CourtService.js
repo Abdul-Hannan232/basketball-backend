@@ -13,10 +13,11 @@ const addCourt = async (courtData) => {
 const allCourt = async () => {
   return await Court.findAll({
     include: [{
-        model: Rating,
-        as: 'rating',
-    }]
-});
+      model: Rating,
+      as: 'rating',
+    }],
+    order: [['created_at', 'DESC']] // Order by created_at in descending order
+  });
 };
 
 const updateCourt = async (courtData) => {

@@ -7,8 +7,10 @@ const { deleteFile } = require("../middlewares/multerConfig")
 const BASE_URL = process.env.BASE_URL;
 
 const getAllUsers = async () => {
-    return await User.findAll();
- };
+    return await User.findAll({
+      order: [['created_at', 'DESC']] // Order by created_at in descending order
+    });
+  };
 
  const addUser = async (userData) => {
     try {
