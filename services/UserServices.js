@@ -85,8 +85,8 @@ const searchUser = async (req) => {
 }; 
 
 const updateUser = async (userData) => {
-      const { name,position,team,weight,height,country,isactive,image,jersey_number,phone_number,address,first_name,last_name,joined_since,remarks,id } = userData
-    const [affectedRows] = await User.update({ name,position,team,weight,height,country,isactive,image,phone_number,address,first_name,last_name,joined_since,jersey_number,remarks }, {
+      const { name,position,team,weight,height,country,isactive,image,jersey_number,phone_number,address,first_name,last_name,joined_since,remarks,role,id } = userData
+    const [affectedRows] = await User.update({ name,position,team,weight,height,country,isactive,image,phone_number,address,first_name,last_name,joined_since,jersey_number,remarks,role }, {
         where: { id: id },
     });
 
