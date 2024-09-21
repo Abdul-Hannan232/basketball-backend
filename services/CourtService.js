@@ -2,6 +2,8 @@ const { response } = require("express");
 const Court = require("../models/Court");
 const Rating = require("../models/Rating");
 const { Sequelize } = require("sequelize");
+const { deleteFile } = require("../middlewares/multerConfig")
+
 
 const addCourt = async (courtData) => {
   // Create court record in database
@@ -64,9 +66,22 @@ const updateCourt = async (courtData) => {
 };
 
 const deleteCourt = async (id) => {
-  return await Court.destroy({
+  // Check if the court exists before attempting to delete
+  const courtExists = await Court.findOne({
     where: { id: id },
   });
+
+  // If user exists, proceed to delete
+  if (courtExists) {
+    await Court.destroy({
+      where: { id: id },
+    });
+     let allImages = JSON.parse(courtExists.dataValues.images)
+      await Promise.all(allImages.map(image => deleteFile(image)));
+     return true; // Indicate successful deletion
+  }
+
+  return false;
 };
 
 const searchCourt = async (req) => {
@@ -99,7 +114,7 @@ const searchCourt = async (req) => {
   return courts;
 };
 
- 
+
 
 const getCourtById = async (id) => {
   try {

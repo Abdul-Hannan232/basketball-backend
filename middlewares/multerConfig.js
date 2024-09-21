@@ -51,7 +51,7 @@ const uploadImage =async (uniqueName)=>{
 
 
 const deleteFile = (fileName) => {
-    console.log("name in deleteFile",fileName)
+    
      const directoryPath = path.join(__dirname, '../upload'); // Path to your folder
     const filePath = path.join(directoryPath, fileName);
   
@@ -67,7 +67,8 @@ const deleteFile = (fileName) => {
           console.error('Error deleting the file:', err);
           return;
         }
-        console.log('File deleted successfully:', filePath);
+        // console.log('File deleted successfully:', filePath);
+        return;
       });
     });
   };
