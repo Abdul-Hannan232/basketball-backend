@@ -2,8 +2,7 @@ const { response } = require("express");
 const Court = require("../models/Court");
 const Rating = require("../models/Rating");
 const { Sequelize } = require("sequelize");
-const { deleteFile } = require("../middlewares/multerConfig")
-
+const { deleteFile } = require("../middlewares/multerConfig");
 
 const addCourt = async (courtData) => {
   // Create court record in database
@@ -14,11 +13,13 @@ const addCourt = async (courtData) => {
 
 const allCourt = async () => {
   return await Court.findAll({
-    include: [{
-      model: Rating,
-      as: 'rating',
-    }],
-    order: [['created_at', 'DESC']] // Order by created_at in descending order
+    include: [
+      {
+        model: Rating,
+        as: "rating",
+      },
+    ],
+    order: [["created_at", "DESC"]], // Order by created_at in descending order
   });
 };
 
@@ -76,54 +77,74 @@ const deleteCourt = async (id) => {
     await Court.destroy({
       where: { id: id },
     });
-     let allImages = JSON.parse(courtExists.dataValues.images)
-      await Promise.all(allImages.map(image => deleteFile(image)));
-     return true; // Indicate successful deletion
+    let allImages = JSON.parse(courtExists.dataValues.images);
+    await Promise.all(allImages.map((image) => deleteFile(image)));
+    return true; // Indicate successful deletion
   }
 
   return false;
 };
 
 const searchCourt = async (req) => {
-  const { name, type, location, isactive } = req.body;
-  const validSearchFields = ["name", "type", "location"];
-  const whereClause = {};
+  const { slug } = req.params;
 
-  validSearchFields.forEach((field) => {
-    if (req.body[field]) {
-      whereClause[field] = {
-        [Sequelize.Op.like]: `%${req.body[field]}%`,
-      };
-    }
-  });
-
-  // Handling the isactive field
-  if (isactive !== undefined && isactive !== null) {
-    if (isactive) {
-      whereClause["isactive"] = true; // Show only active courts
-    } else if (!isactive) {
-      whereClause["isactive"] = false; // Show only not active courts
-    }
-    // If isactive is not provided or not 0 or 1, show all courts (both active and not active)
+  // Handle invalid query
+  if (!slug || typeof slug !== "string") {
+    throw new Error("Invalid court name parameter.");
   }
 
   const courts = await Court.findAll({
-    where: whereClause,
+    where: {
+      name: {
+        [Sequelize.Op.like]: `%${slug}%`,
+      },
+      isactive: true, 
+    },
   });
 
   return courts;
 };
 
+// const searchCourt = async (req) => {
+//   const { name, type, location, isactive } = req.body;
+//   const validSearchFields = ["name", "type", "location"];
+//   const whereClause = {};
 
+//   validSearchFields.forEach((field) => {
+//     if (req.body[field]) {
+//       whereClause[field] = {
+//         [Sequelize.Op.like]: `%${req.body[field]}%`,
+//       };
+//     }
+//   });
+
+//   // Handling the isactive field
+//   if (isactive !== undefined && isactive !== null) {
+//     if (isactive) {
+//       whereClause["isactive"] = true; // Show only active courts
+//     } else if (!isactive) {
+//       whereClause["isactive"] = false; // Show only not active courts
+//     }
+//     // If isactive is not provided or not 0 or 1, show all courts (both active and not active)
+//   }
+
+//   const courts = await Court.findAll({
+//     where: whereClause,
+//   });
+
+//   return courts;
+// };
 
 const getCourtById = async (id) => {
   try {
     // Find the court by ID and include its associated rating
     const court = await Court.findByPk(id, {
-      include: [{
-        model: Rating,
-        as: 'rating' // assuming 'rating' is the alias for the Rating model defined in Relation.js
-      }]
+      include: [
+        {
+          model: Rating,
+          as: "rating", // assuming 'rating' is the alias for the Rating model defined in Relation.js
+        },
+      ],
     });
 
     if (!court) {
@@ -133,11 +154,10 @@ const getCourtById = async (id) => {
     return court;
   } catch (error) {
     // Handle errors gracefully
-    console.error('Error fetching court:', error);
+    console.error("Error fetching court:", error);
     throw error;
   }
 };
-
 
 module.exports = {
   addCourt,
