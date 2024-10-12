@@ -58,32 +58,6 @@ const deleteCourt = async (req, res, next) => {
   }
 };
 
-const searchCourt = async (req, res, next) => {
-    try {
-      const courts = await courtService.searchCourt(req);
-  
-      if (!courts || courts.length === 0) {
-        return res.status(404).json({ message: "No courts found with the given name.", success: false });
-      }
-  
-      res.status(200).json({ courts , success: true });
-    } catch (error) {
-      console.error("Error in searchCourt:", error.message);
-      res.status(500).json({ message: "An error occurred while searching for courts.",  success: false });
-      next(error);
-    }
-  };
-  // const searchCourt = async (req, res, next) => {
-//     try {
-//         const courts = await courtService.searchCourt(req);
-//         res.json({ courts });
-
-//     } catch (error) {
-//         console.log(error.message)
-//         next(error)
-//     }
-// }
-
 const getCourt = async (req, res, next) => {
   try {
     const courtDetail = await courtService.getCourtById(req.params.id);
@@ -97,11 +71,69 @@ const getCourt = async (req, res, next) => {
   }
 };
 
+// const searchCourt = async (req, res, next) => {
+//     try {
+//         const courts = await courtService.searchCourt(req);
+//         res.json({ courts });
+
+//     } catch (error) {
+//         console.log(error.message)
+//         next(error)
+//     }
+// }
+
+const searchCourt = async (req, res, next) => {
+  try {
+    const courts = await courtService.searchCourt(req);
+
+    if (!courts || courts.length === 0) {
+      return res.status(404).json({
+        message: "No courts found with the given name.",
+        success: false,
+      });
+    }
+
+    res.status(200).json({ totalCount: courts.length, courts, success: true });
+  } catch (error) {
+    console.error("Error in searchCourt:", error.message);
+    res.status(500).json({
+      message: "An error occurred while searching for courts.",
+      success: false,
+    });
+    next(error);
+  }
+};
+
+const filterCourts = async (req, res) => {
+  try {
+    const filters = {
+      order: req.query.order, // latest, popular, review
+      courtType: req.query.courtType, // indoor, outdoor, shelter
+    };
+
+    const courts = await courtService.filterCourts(filters);
+
+    if (courts.length === 0) {
+      return res
+        .status(404)
+        .json({
+          message: "No courts found for the given filters.",
+          success: false,
+        });
+    }
+
+    res.status(200).json({ totalCount: courts.length , courts, success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message ,  success: false,});
+  }
+};
+
 module.exports = {
   addCourt,
   allCourt,
   updateCourt,
   deleteCourt,
-  searchCourt,
   getCourt,
+  searchCourt,
+  filterCourts
 };

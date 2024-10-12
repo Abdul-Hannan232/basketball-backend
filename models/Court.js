@@ -120,8 +120,8 @@ const Court = sequelize.define(
     ratings: {
       type: DataTypes.DECIMAL(3, 2),
       validate: {
-        min: 0,   // Ensure ratings are not below 0
-        max: 5,   // Ensure ratings do not exceed 5
+        min: 0,  
+        max: 5, 
       },
     },
     type: {

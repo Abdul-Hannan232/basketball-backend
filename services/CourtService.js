@@ -85,25 +85,6 @@ const deleteCourt = async (id) => {
   return false;
 };
 
-const searchCourt = async (req) => {
-  const { slug } = req.params;
-
-  // Handle invalid query
-  if (!slug || typeof slug !== "string") {
-    throw new Error("Invalid court name parameter.");
-  }
-
-  const courts = await Court.findAll({
-    where: {
-      name: {
-        [Sequelize.Op.like]: `%${slug}%`,
-      },
-      isactive: true, 
-    },
-  });
-
-  return courts;
-};
 
 // const searchCourt = async (req) => {
 //   const { name, type, location, isactive } = req.body;
@@ -159,11 +140,75 @@ const getCourtById = async (id) => {
   }
 };
 
+
+const searchCourt = async (req) => {
+  const { slug } = req.params;
+
+  // Handle invalid query
+  if (!slug || typeof slug !== "string") {
+    throw new Error("Invalid court name parameter.");
+  }
+if(slug.toLowerCase() === "all"){
+  const courts = await Court.findAll();
+  return courts;
+}else{
+    const courts = await Court.findAll({
+      where: {
+        name: {
+          [Sequelize.Op.like]: `%${slug}%`,
+        },
+        isactive: true, 
+      },
+    });
+    return courts;
+  }
+
+};
+
+
+const filterCourts = async (filters) => {
+  const { order, courtType, location, userLat, userLng } = filters;
+
+  // Define sorting options
+  let orderOption = [];
+  if (order === "latest") {
+    orderOption.push(["created_at", "DESC"]);
+  } else if (order === "popular") {
+    orderOption.push(["ratings", "DESC"]);
+  } else if (order === "review") {
+    orderOption.push(["ratings", "DESC"]);
+  }
+
+  // Build filters for court type
+  let whereConditions = {isactive:true};
+  if (courtType) {
+    whereConditions.type = courtType;
+  }
+
+
+  // Fetch filtered courts from the database
+  const courts = await Court.findAll({
+    where: whereConditions,
+    order: orderOption,
+  });
+
+  return courts;
+};
+
+
+
+
+
+
+
+
+
 module.exports = {
   addCourt,
   allCourt,
   updateCourt,
   deleteCourt,
-  searchCourt,
   getCourtById,
+  searchCourt,
+  filterCourts,
 };
