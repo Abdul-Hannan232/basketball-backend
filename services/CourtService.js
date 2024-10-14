@@ -2,10 +2,11 @@ const { response } = require("express");
 const Court = require("../models/Court");
 const Rating = require("../models/Rating");
 const { Sequelize } = require("sequelize");
-const { deleteFile } = require("../middlewares/multerConfig");
+const { deleteFile } = require("../middlewares/multerConfig")
+
 
 const addCourt = async (courtData) => {
-  // Create court record in database
+  // Create court record in database 
   return await Court.create({
     ...courtData,
   });
@@ -13,13 +14,11 @@ const addCourt = async (courtData) => {
 
 const allCourt = async () => {
   return await Court.findAll({
-    include: [
-      {
-        model: Rating,
-        as: "rating",
-      },
-    ],
-    order: [["created_at", "DESC"]], // Order by created_at in descending order
+    include: [{
+      model: Rating,
+      as: 'rating',
+    }],
+    order: [['created_at', 'DESC']] // Order by created_at in descending order
   });
 };
 
@@ -77,14 +76,13 @@ const deleteCourt = async (id) => {
     await Court.destroy({
       where: { id: id },
     });
-    let allImages = JSON.parse(courtExists.dataValues.images);
-    await Promise.all(allImages.map((image) => deleteFile(image)));
-    return true; // Indicate successful deletion
+     let allImages = JSON.parse(courtExists.dataValues.images)
+      await Promise.all(allImages.map(image => deleteFile(image)));
+     return true; // Indicate successful deletion
   }
 
   return false;
 };
-
 
 // const searchCourt = async (req) => {
 //   const { name, type, location, isactive } = req.body;
@@ -116,40 +114,19 @@ const deleteCourt = async (id) => {
 //   return courts;
 // };
 
-const getCourtById = async (id) => {
-  try {
-    // Find the court by ID and include its associated rating
-    const court = await Court.findByPk(id, {
-      include: [
-        {
-          model: Rating,
-          as: "rating", // assuming 'rating' is the alias for the Rating model defined in Relation.js
-        },
-      ],
-    });
-
-    if (!court) {
-      return null; // Court not found
-    }
-
-    return court;
-  } catch (error) {
-    // Handle errors gracefully
-    console.error("Error fetching court:", error);
-    throw error;
-  }
-};
 
 
 const searchCourt = async (req) => {
   const { slug } = req.params;
 
+  console.log(slug);
+  
   // Handle invalid query
   if (!slug || typeof slug !== "string") {
     throw new Error("Invalid court name parameter.");
   }
 if(slug.toLowerCase() === "all"){
-  const courts = await Court.findAll();
+  const courts = await Court.findAll({where:{isactive: true}});
   return courts;
 }else{
     const courts = await Court.findAll({
@@ -160,47 +137,34 @@ if(slug.toLowerCase() === "all"){
         isactive: true, 
       },
     });
+    
     return courts;
   }
 
 };
 
 
-const filterCourts = async (filters) => {
-  const { order, courtType, location, userLat, userLng } = filters;
+const getCourtById = async (id) => {
+  try {
+    // Find the court by ID and include its associated rating
+    const court = await Court.findByPk(id, {
+      include: [{
+        model: Rating,
+        as: 'rating' // assuming 'rating' is the alias for the Rating model defined in Relation.js
+      }]
+    });
 
-  // Define sorting options
-  let orderOption = [];
-  if (order === "latest") {
-    orderOption.push(["created_at", "DESC"]);
-  } else if (order === "popular") {
-    orderOption.push(["ratings", "DESC"]);
-  } else if (order === "review") {
-    orderOption.push(["ratings", "DESC"]);
+    if (!court) {
+      return null; // Court not found
+    }
+
+    return court;
+  } catch (error) {
+    // Handle errors gracefully
+    console.error('Error fetching court:', error);
+    throw error;
   }
-
-  // Build filters for court type
-  let whereConditions = {isactive:true};
-  if (courtType) {
-    whereConditions.type = courtType;
-  }
-
-
-  // Fetch filtered courts from the database
-  const courts = await Court.findAll({
-    where: whereConditions,
-    order: orderOption,
-  });
-
-  return courts;
 };
-
-
-
-
-
-
-
 
 
 module.exports = {
@@ -208,7 +172,6 @@ module.exports = {
   allCourt,
   updateCourt,
   deleteCourt,
-  getCourtById,
   searchCourt,
-  filterCourts,
+  getCourtById,
 };
