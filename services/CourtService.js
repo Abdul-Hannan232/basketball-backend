@@ -117,10 +117,7 @@ const deleteCourt = async (id) => {
 
 
 const searchCourt = async (req) => {
-  const { slug } = req.params;
-
-  console.log(slug);
-  
+  const { slug } = req.params;  
   // Handle invalid query
   if (!slug || typeof slug !== "string") {
     throw new Error("Invalid court name parameter.");
