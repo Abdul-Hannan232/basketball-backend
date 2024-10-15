@@ -51,6 +51,26 @@ const deleteCourt = async (req, res, next) => {
     }
 }
 
+
+
+const getCourt = async (req, res, next) => {
+
+    try {
+        const courtDetail = await courtService.getCourtById(req.params.id);
+        if (courtDetail) {
+            res.json(courtDetail);
+        } else {
+            res.status(HttpStatus.NOT_FOUND).send("Court not found");
+        }
+    } catch (err) {
+        next(err)
+    }
+}
+
+
+
+
+
 // const searchCourt = async (req, res, next) => {
 //     try {
 //         const courts = await courtService.searchCourt(req);
@@ -83,21 +103,37 @@ const searchCourt = async (req, res, next) => {
       next(error);
     }
   };
+
+
+
+  const filterCourts = async (req, res) => {
+    // console.log('>>>>>>>>>>>>> filter : ',req.query);
+    
+    try {
+      const filters = {
+        order: req.query.order, // latest, popular, review
+        courtType: req.query.courtType, // indoor, outdoor, shelter
+        // location: req.query.location, // near_me
+      };
+  
+      const courts = await courtService.filterCourts(filters);
+  
+      if (courts.length === 0) {
+        return res
+          .status(404)
+          .json({
+            message: "No courts found for the given filters.",
+            success: false,
+          });
+      }
+  
+      res.status(200).json({ totalCount: courts.length , courts, success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error: error.message ,  success: false,});
+    }
+  };
   
 
-const getCourt = async (req, res, next) => {
-
-    try {
-        const courtDetail = await courtService.getCourtById(req.params.id);
-        if (courtDetail) {
-            res.json(courtDetail);
-        } else {
-            res.status(HttpStatus.NOT_FOUND).send("Court not found");
-        }
-    } catch (err) {
-        next(err)
-    }
-}
 
 module.exports = {
     addCourt,
@@ -105,6 +141,7 @@ module.exports = {
     updateCourt,
     deleteCourt,
     searchCourt,
-    getCourt
+    getCourt,
+    filterCourts
 };
 

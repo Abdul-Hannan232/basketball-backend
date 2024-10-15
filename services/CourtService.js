@@ -84,6 +84,33 @@ const deleteCourt = async (id) => {
   return false;
 };
 
+
+
+const getCourtById = async (id) => {
+  try {
+    // Find the court by ID and include its associated rating
+    const court = await Court.findByPk(id, {
+      include: [{
+        model: Rating,
+        as: 'rating' // assuming 'rating' is the alias for the Rating model defined in Relation.js
+      }]
+    });
+
+    if (!court) {
+      return null; // Court not found
+    }
+
+    return court;
+  } catch (error) {
+    // Handle errors gracefully
+    console.error('Error fetching court:', error);
+    throw error;
+  }
+};
+
+
+
+
 // const searchCourt = async (req) => {
 //   const { name, type, location, isactive } = req.body;
 //   const validSearchFields = ["name", "type", "location"];
@@ -118,6 +145,8 @@ const deleteCourt = async (id) => {
 
 const searchCourt = async (req) => {
   const { slug } = req.params;  
+  // console.log(' >>>>>>>>>>>>>>>>>>>>>. search : ' ,slug);
+  
   // Handle invalid query
   if (!slug || typeof slug !== "string") {
     throw new Error("Invalid court name parameter.");
@@ -141,27 +170,37 @@ if(slug.toLowerCase() === "all"){
 };
 
 
-const getCourtById = async (id) => {
-  try {
-    // Find the court by ID and include its associated rating
-    const court = await Court.findByPk(id, {
-      include: [{
-        model: Rating,
-        as: 'rating' // assuming 'rating' is the alias for the Rating model defined in Relation.js
-      }]
-    });
+const filterCourts = async (filters) => {
+  const { order, courtType} = filters;
 
-    if (!court) {
-      return null; // Court not found
-    }
-
-    return court;
-  } catch (error) {
-    // Handle errors gracefully
-    console.error('Error fetching court:', error);
-    throw error;
+  // Define sorting options
+  let orderOption = [];
+  if (order === "latest") {
+    orderOption.push(["created_at", "DESC"]);
+  } else if (order === "popular") {
+    orderOption.push(["ratings", "DESC"]);
+  } else if (order === "review") {
+    orderOption.push(["ratings", "DESC"]);
   }
-};
+
+  // Build filters for court type
+  let whereConditions = {isactive:true};
+  if (courtType) {
+    whereConditions.type = courtType;
+  }
+
+
+  // Fetch filtered courts from the database
+  const courts = await Court.findAll({
+    where: whereConditions,
+    order: orderOption,
+  });
+
+  return courts;
+}
+
+
+
 
 
 module.exports = {
@@ -169,6 +208,7 @@ module.exports = {
   allCourt,
   updateCourt,
   deleteCourt,
-  searchCourt,
   getCourtById,
+  searchCourt,
+  filterCourts
 };
