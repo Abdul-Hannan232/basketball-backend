@@ -54,7 +54,8 @@ const deleteCourt = async (req, res, next) => {
 
 
 const getCourt = async (req, res, next) => {
-
+  // console.log(">>>>>>>>>>>> ", req.params);
+  
     try {
         const courtDetail = await courtService.getCourtById(req.params.id);
         if (courtDetail) {

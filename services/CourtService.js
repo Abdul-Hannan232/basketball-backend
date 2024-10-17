@@ -1,8 +1,8 @@
-const { response } = require("express");
 const Court = require("../models/Court");
 const Rating = require("../models/Rating");
 const { Sequelize } = require("sequelize");
 const { deleteFile } = require("../middlewares/multerConfig")
+
 
 
 const addCourt = async (courtData) => {

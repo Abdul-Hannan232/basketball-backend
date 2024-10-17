@@ -4,6 +4,7 @@ const sequelize = require("../config/database");
 const Court = sequelize.define(
   "courts",
   {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: {
       type: DataTypes.STRING,
     },
