@@ -15,9 +15,9 @@ router.get('/all', CourtController.allCourt)
 router.get('/:id', CourtController.getCourt);
 router.put('/update', authenticateToken, CourtController.updateCourt)
 router.delete('/:id', authenticateToken, CourtController.deleteCourt)
-// router.post('/search', authenticateToken, CourtController.searchCourt);
-router.get('/search/:slug', CourtController.searchCourt);
-router.get("/filter/query", CourtController.filterCourts);
+router.post('/search', CourtController.searchCourt);
+// router.get('/search/:slug', CourtController.searchCourt);
+// router.get("/filter/query", CourtController.filterCourts);
 
 
 module.exports = router 

@@ -1,37 +1,108 @@
-const { Op } = require('sequelize');
+const { Op } = require("sequelize");
 const CheckIn = require("../models/CheckIn");
-
+const User = require("../models/User");
 
 const checkInService = {
-
   async hasRecentCheckIn(userId, courtId) {
     const currentTime = new Date();
-    const sixHoursAgo = new Date(currentTime.getTime() - (6 * 60 * 60 * 1000));
+    const sixHoursAgo = new Date(currentTime.getTime() - 6 * 60 * 60 * 1000);
 
     const recentCheckIn = await CheckIn.findOne({
       where: {
         userId: userId,
         courtId: courtId,
-        checkInTime: { [Op.gt]: sixHoursAgo }
-      }
+        checkInTime: { [Op.gt]: sixHoursAgo },
+      },
     });
 
-    return !!recentCheckIn; // Return true if a recent check-in exists
+    return !!recentCheckIn; // return true if recent check-in exists
   },
 
-//    Create a new check-in for the user and court
-  
+  //    Create new check-in
+
   async createCheckIn(userId, courtId) {
     const currentTime = new Date();
 
     const newCheckIn = await CheckIn.create({
       userId: userId,
       courtId: courtId,
-      checkInTime: currentTime
+      checkInTime: currentTime,
     });
 
     return newCheckIn;
-  }
+  },
+
+  // get checkin by court
+
+  //   async getCheckInsByCourtId(courtId) {
+  //     const checkIns = await CheckIn.findAll({
+  //       where: {
+  //         courtId: courtId
+  //       },
+  //       include: [
+  //         {
+  //           model: User, // include userData
+  //           attributes: [ 'name', 'created_at', "team", "height" , "weight"],
+  //         }
+  //       ],
+  //       order: [['checkInTime', 'DESC']]  // latest first
+  //     });
+
+  //     return checkIns;
+  //   }
+
+  async getCheckInsByCourtId(courtId) {
+    const checkIns = await CheckIn.findAll({
+      where: {
+        courtId: courtId,
+      },
+      include: [
+        {
+          model: User,
+          attributes: ["name", "created_at", "team", "height", "weight"],
+        },
+      ],
+      order: [["checkInTime", "DESC"]], // latest first
+    });
+
+    // format checkInTime
+    const formattedCheckIns = checkIns.map((checkIn) => {
+      const formattedTime = new Date(checkIn.checkInTime).toLocaleString(
+        "en-US",
+        {
+          year: "2-digit",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        }
+      );
+
+      // User Joining Date
+      const userJoiningDate = new Date(checkIn?.user?.created_at); // user createdAt as joining date
+      const year = userJoiningDate.getFullYear(); // extract the year
+
+      const joiningDate = `Joined Since ${year}`;
+
+      return {
+        ...checkIn.toJSON(),
+        user: {
+          ...checkIn.user.toJSON(),
+          joiningDate: joiningDate,
+        },
+        checkInTime: formattedTime,
+      };
+    });
+
+    return formattedCheckIns;
+  },
+
+  async AllCourts() {
+    return await CheckIn.findAll({
+      order: [["createdAt", "DESC"]],
+    });
+  },
 };
 
 module.exports = checkInService;

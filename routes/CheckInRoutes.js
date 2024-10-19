@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const CheckInController = require('../controllers/CheckInController');
 const authenticateToken = require('../middlewares/AuthMiddleware')
-const { upload } = require('../middlewares/multerConfig');
 
 
 
@@ -12,6 +11,8 @@ router.post('/add', authenticateToken, CheckInController.AddCheckIn, (err, req, 
     } 
     return next();
 })
-router.get('/status/:userId/:courtId', CheckInController.CheckInStatus);
+router.get('/status/:userId/:courtId', authenticateToken, CheckInController.CheckInStatus);
+router.get('/checkins/:courtId', CheckInController.GetCheckInsByCourtId);
+router.get('/all', CheckInController.AllCheckins)
 
 module.exports = router 

@@ -8,6 +8,7 @@ const AuthRoutes = require('./routes/AuthRoutes')
 const CourtRoutes = require('./routes/CourtRoutes')
 const RatingRoutes = require('./routes/RatingRoutes')
 const CheckInRoutes = require('./routes/CheckInRoutes')
+const ReviewRoutes = require('./routes/ReviewRoutes')
 const setupDatabaseRelations=require('./models/Relations')
 const path = require('path');
 const cors = require('cors')
@@ -32,6 +33,7 @@ app.use('/api/user', UserRoutes)
 app.use('/api/court',CourtRoutes) 
 app.use('/api/rating',RatingRoutes)
 app.use('/api/checkin',CheckInRoutes)
+app.use('/api/reviews',ReviewRoutes)
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
 
