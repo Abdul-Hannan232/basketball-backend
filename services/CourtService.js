@@ -109,39 +109,6 @@ const getCourtById = async (id) => {
 };
 
 
-
-
-// const searchCourt = async (req) => {
-//   const { name, type, location, isactive } = req.body;
-//   const validSearchFields = ["name", "type", "location"];
-//   const whereClause = {};
-
-//   validSearchFields.forEach((field) => {
-//     if (req.body[field]) {
-//       whereClause[field] = {
-//         [Sequelize.Op.like]: `%${req.body[field]}%`,
-//       };
-//     }
-//   });
-
-//   // Handling the isactive field
-//   if (isactive !== undefined && isactive !== null) {
-//     if (isactive) {
-//       whereClause["isactive"] = true; // Show only active courts
-//     } else if (!isactive) {
-//       whereClause["isactive"] = false; // Show only not active courts
-//     }
-//     // If isactive is not provided or not 0 or 1, show all courts (both active and not active)
-//   }
-
-//   const courts = await Court.findAll({
-//     where: whereClause,
-//   });
-
-//   return courts;
-// };
-
-
 searchCourt = async (req) => {
   console.log(">>>>>>>>>>>>>>>>>> ", req.body);
   
@@ -188,66 +155,6 @@ searchCourt = async (req) => {
   return { totalCount: courts.length, courts, success: true };
   // return courts;
 };
-
-
-
-
-// const searchCourt = async (req) => {
-//   const { slug } = req.params;  
-//   // console.log(' >>>>>>>>>>>>>>>>>>>>>. search : ' ,slug);
-  
-//   // Handle invalid query
-//   if (!slug || typeof slug !== "string") {
-//     throw new Error("Invalid court name parameter.");
-//   }
-// if(slug.toLowerCase() === "all"){
-//   const courts = await Court.findAll({where:{isactive: true}});
-//   return courts;
-// }else{
-//     const courts = await Court.findAll({
-//       where: {
-//         name: {
-//           [Sequelize.Op.like]: `%${slug}%`,
-//         },
-//         isactive: true, 
-//       },
-//     });
-    
-//     return courts;
-//   }
-
-// };
-
-
-// const filterCourts = async (filters) => {
-//   const { order, courtType} = filters;
-
-//   // Define sorting options
-//   let orderOption = [];
-//   if (order === "latest") {
-//     orderOption.push(["created_at", "DESC"]);
-//   } else if (order === "popular") {
-//     orderOption.push(["ratings", "DESC"]);
-//   } else if (order === "review") {
-//     orderOption.push(["ratings", "DESC"]);
-//   }
-
-//   // Build filters for court type
-//   let whereConditions = {isactive:true};
-//   if (courtType) {
-//     whereConditions.type = courtType;
-//   }
-
-
-//   // Fetch filtered courts from the database
-//   const courts = await Court.findAll({
-//     where: whereConditions,
-//     order: orderOption,
-//   });
-
-//   return courts;
-// }
-
 
 
 

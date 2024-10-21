@@ -1,15 +1,19 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const ReviewController = require('../controllers/ReviewController');
-const authenticateToken = require('../middlewares/AuthMiddleware')
+const ReviewController = require("../controllers/ReviewController");
+const authenticateToken = require("../middlewares/AuthMiddleware");
 
-
-router.post('/add', authenticateToken, ReviewController.addReview, (err, req, res, next) => {
+router.post(
+  "/add",
+  authenticateToken,
+  ReviewController.addReview,
+  (err, req, res, next) => {
     if (err) {
-        return res.status(400).json({ message: err.message }); // Send error message to frontend
-    } 
+      return res.status(400).json({ message: err.message }); // Send error message to frontend
+    }
     return next();
-})
+  }
+);
+router.get("/court/:courtId", ReviewController.getReviewsByCourtId);
 
-
-module.exports = router
+module.exports = router;

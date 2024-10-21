@@ -51,7 +51,8 @@ const checkInService = {
   //     return checkIns;
   //   }
 
-  async getCheckInsByCourtId(courtId) {
+  async getCheckInsByCourtId(courtId , page, limit) {
+    const offset = (page - 1) * limit;
     const checkIns = await CheckIn.findAll({
       where: {
         courtId: courtId,
@@ -63,6 +64,8 @@ const checkInService = {
         },
       ],
       order: [["checkInTime", "DESC"]], // latest first
+      limit: limit,
+        offset: offset,
     });
 
     // format checkInTime
@@ -95,7 +98,21 @@ const checkInService = {
       };
     });
 
-    return formattedCheckIns;
+    //////////////////// total checkins count
+
+const totalChekinsCount = await CheckIn.count({
+  where: {
+    courtId: courtId,
+  },
+});
+
+
+
+return {
+  checkIns : formattedCheckIns,
+  totalPages: Math.ceil(+totalChekinsCount / limit),
+  totalChekinsCount,
+};
   },
 
   async AllCourts() {

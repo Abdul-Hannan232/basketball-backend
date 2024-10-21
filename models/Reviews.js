@@ -3,7 +3,7 @@ const sequelize = require("../config/database");
 const User = require("../models/User"); 
 const Court = require("../models/Court"); 
 
-const Review = sequelize.define(
+const Reviews = sequelize.define(
   "reviews",
   {
     comment: {
@@ -62,27 +62,27 @@ const Review = sequelize.define(
 
 // Relations
 
-Review.belongsTo(User, {
+Reviews.belongsTo(User, {
   foreignKey: "userId",
   as: "user",
 });
 
 
-Review.belongsTo(Court, {
+Reviews.belongsTo(Court, {
   foreignKey: "courtId",
   as: "court",
 });
 
 
-User.hasMany(Review, {
+User.hasMany(Reviews, {
   foreignKey: "userId",
   as: "reviews",
 });
 
 
-Court.hasMany(Review, {
+Court.hasMany(Reviews, {
   foreignKey: "courtId",
   as: "reviews",
 });
 
-module.exports = Review;
+module.exports = Reviews;

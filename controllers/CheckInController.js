@@ -69,11 +69,12 @@ const CheckInStatus = async (req, res) => {
 
 const GetCheckInsByCourtId = async (req, res) => {
   const { courtId } = req.params;
-
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
   try {
-    const checkIns = await checkInService.getCheckInsByCourtId(courtId);
+    const checkIns = await checkInService.getCheckInsByCourtId(courtId, page, limit);
 
-    if (checkIns?.length === 0) {
+    if (checkIns?.totalChekinsCount === 0) {
       return res
         .status(404)
         .json({
@@ -84,7 +85,8 @@ const GetCheckInsByCourtId = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, checkIns, total: checkIns?.length });
+      .json({...checkIns , success: true});
+      // .json({ success: true, checkIns, total: checkIns?.length });
   } catch (error) {
     console.error("Error fetching check-ins by court ID", error);
     return res
