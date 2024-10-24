@@ -1,7 +1,9 @@
 const Court = require("../models/Court");
-const Rating = require("../models/Rating");
 const { Sequelize } = require("sequelize");
-const { deleteFile } = require("../middlewares/multerConfig")
+const { deleteFile } = require("../middlewares/multerConfig");
+const Reviews = require("../models/Reviews");
+const sequelize = require("../config/database");
+const calculateAverageRating = require("../utils/calculateAverageRating");
 
 
 
@@ -11,16 +13,43 @@ const addCourt = async (courtData) => {
     ...courtData,
   });
 };
+ 
+const allCourt = async (page, limit) => { 
+  try {
+    const courts = await Court.findAll({
+      include: [
+        {
+          model: Reviews,
+          as: 'reviews_id',
+          attributes: ['accessibilityRating', 'conditionRating', 'overallRating'],
+        }
+      ],
+      attributes: {
+        include: [
+          [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('reviews_id.accessibilityRating')), 1), 'avgAccessibilityRating'],
+          [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('reviews_id.conditionRating')), 1), 'avgConditionRating'],
+          [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('reviews_id.overallRating')), 1), 'avgOverallRating'],
+        ]      },
+      group: ['courtId'],
+      order: [['created_at', 'DESC']],
+      
+    });
 
-const allCourt = async () => {
-  return await Court.findAll({
-    include: [{
-      model: Rating,
-      as: 'rating',
-    }],
-    order: [['created_at', 'DESC']] // Order by created_at in descending order
-  });
+    return courts.map(court => {
+      const totalAverageRating = calculateAverageRating(court.dataValues);
+
+      return {
+        ...court.toJSON(),
+        totalAverageRating,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching courts with ratings:', error);
+    throw error;
+  }
 };
+
+
 
 const updateCourt = async (courtData) => {
   const {
@@ -91,8 +120,10 @@ const getCourtById = async (id) => {
     // Find the court by ID and include its associated rating
     const court = await Court.findByPk(id, {
       include: [{
-        model: Rating,
-        as: 'rating' // assuming 'rating' is the alias for the Rating model defined in Relation.js
+        // model: Rating,
+        // as: 'rating' // assuming 'rating' is the alias for the Rating model defined in Relation.js
+        model: Reviews,
+      as: 'reviews_id',
       }]
     });
 

@@ -40,7 +40,7 @@ const getReviewsByCourtId = async (req, res) => {
   const { courtId } = req.params;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
-
+ 
   if (!courtId) {
     return res.status(400).json({ message: "Court ID is required" });
   }
